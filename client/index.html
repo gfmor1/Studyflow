@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyFlow</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b1220">
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>StudyFlow</h1>
+      <p class="muted">Courses, tasks, weekly plan, and schedule blocks.</p>
+      <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="plan.html">Weekly Plan</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>Quick links</h2>
+        <p class="muted">Use these pages. Stop living in raw JSON.</p>
+        <div class="row">
+          <a class="badge" href="courses.html">Manage courses</a>
+          <a class="badge" href="tasks.html">Add and finish tasks</a>
+          <a class="badge" href="plan.html">View weekly plan</a>
+          <a class="badge" href="schedule.html">Generate blocks</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Snapshot</h2>
+        <div class="small" id="stats">Loading…</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    markActiveNav();
+
+    async function loadStats() {
+      const [courses, tasks, plan, schedule] = await Promise.all([
+        api("/api/courses"),
+        api("/api/tasks"),
+        api("/api/plan/week"),
+        api("/api/schedule")
+      ]);
+
+      const todo = tasks.tasks.filter(t => t.status === "todo").length;
+      const done = tasks.tasks.filter(t => t.status === "done").length;
+
+      document.getElementById("stats").textContent =
+        `Courses: ${courses.courses.length}\n` +
+        `Tasks: ${tasks.tasks.length} (todo ${todo}, done ${done})\n` +
+        `Weekly planned hours: ${plan.week_total_hours}\n` +
+        `Scheduled blocks: ${schedule.blocks.length}`;
+    }
+
+    loadStats().catch(e => {
+      document.getElementById("stats").textContent = "Error: " + e.message;
+    });
+  </script>
+</body>
+</html>

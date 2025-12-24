@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weekly Plan</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b1220">
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Weekly Plan</h1>
+      <p class="muted">Shows only todo tasks with allocated hours.</p>
+      <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="plan.html">Weekly Plan</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="row">
+        <button class="primary" id="reload">Reload</button>
+        <div class="small" id="msg"></div>
+      </div>
+      <hr />
+      <div id="content"></div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/plan.js"></script>
+</body>
+</html>

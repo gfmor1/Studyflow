@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tasks</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b1220">
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Tasks</h1>
+      <p class="muted">Create tasks, toggle todo/done, and delete.</p>
+      <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="courses.html">Courses</a>
+        <a href="tasks.html">Tasks</a>
+        <a href="plan.html">Weekly Plan</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>Add task</h2>
+        <div class="row">
+          <div>
+            <label>Course</label>
+            <select id="course"></select>
+          </div>
+          <div>
+            <label>Title</label>
+            <input id="title" placeholder="e.g., Chapter 7 practice" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Deadline</label>
+            <input id="deadline" type="datetime-local" />
+          </div>
+          <div>
+            <label>Estimated hours</label>
+            <input id="hours" type="number" min="0.5" step="0.5" value="2" />
+          </div>
+          <div>
+            <label>Priority (1–5)</label>
+            <input id="priority" type="number" min="1" max="5" step="1" value="3" />
+          </div>
+        </div>
+        <div class="row">
+          <button class="primary" id="addBtn">Add</button>
+          <button id="reloadBtn">Reload</button>
+          <div class="small" id="msg"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Task list</h2>
+        <div class="row">
+          <div>
+            <label>Filter by course</label>
+            <select id="filterCourse"></select>
+          </div>
+        </div>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/tasks.js"></script>
+</body>
+</html>

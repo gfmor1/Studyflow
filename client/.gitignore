@@ -1,0 +1,9 @@
+Set-Content -Path .gitignore -Value @"
+node_modules/
+.env
+.DS_Store
+server/db/*.sqlite
+server/db/*.sqlite3
+server/db/*.db
+"@
+

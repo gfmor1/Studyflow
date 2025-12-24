@@ -1,0 +1,17 @@
+{
+  "name": "studyflow",
+  "version": "1.0.0",
+  "private": true,
+    "scripts": {
+   "start": "node server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}
