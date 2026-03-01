@@ -18,12 +18,15 @@ CREATE TABLE IF NOT EXISTS courses (
 
 CREATE TABLE IF NOT EXISTS tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
   course_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   deadline TEXT NOT NULL,
-  estimated_hours REAL NOT NULL,
+  estimated_hours REAL NOT NULL CHECK (estimated_hours > 0),
   priority INTEGER NOT NULL DEFAULT 3,
+  status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo','done')),
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 );
 
@@ -36,22 +39,9 @@ CREATE TABLE IF NOT EXISTS study_blocks (
   FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
-INSERT OR IGNORE INTO users (id, email, password_hash)
-VALUES (1, 'demo@studyflow.local', NULL);
-
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE IF NOT EXISTS tasks (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  course_id INTEGER NOT NULL,
-  title TEXT NOT NULL,
-  estimated_hours REAL NOT NULL CHECK (estimated_hours > 0),
-  status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo','done')),
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE CASCADE
-);
-
 CREATE INDEX IF NOT EXISTS idx_tasks_user_course ON tasks(user_id, course_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_user_status ON tasks(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_tasks_deadline ON tasks(deadline);
 
+INSERT OR IGNORE INTO users (id, email, password_hash)
+VALUES (1, 'demo@studyflow.local', NULL);
