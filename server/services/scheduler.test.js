@@ -41,9 +41,9 @@ describe("generateScheduleBlocks", () => {
     expect(blocks.length).toBeGreaterThan(0);
 
     for (const block of blocks) {
-      expect(new Date(block.end_time)).toBeLessThanOrEqual(
-        new Date("2026-09-20T23:59:00.000Z")
-      );
+     expect(new Date(block.end_time).getTime()).toBeLessThanOrEqual(
+  new Date("2026-09-20T23:59:00.000Z").getTime()
+);
     }
   });
 
