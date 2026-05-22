@@ -23,3 +23,10 @@ StudyFlow is a full-stack study planner that helps students manage courses, trac
 ```bash
 npm install
 npm start
+
+## Testing
+
+Run the test suite with:
+
+```bash
+npm test
