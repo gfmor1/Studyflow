@@ -2,16 +2,21 @@
   "name": "studyflow",
   "version": "1.0.0",
   "private": true,
-    "scripts": {
-   "start": "node server/index.js"
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Gianfranco Morabito",
   "license": "ISC",
-  "description": "",
+  "description": "A full-stack study planner that manages courses, tasks, weekly plans, and deadline-aware study blocks.",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.2.2"
   }
 }

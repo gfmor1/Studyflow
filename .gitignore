@@ -1,6 +1,11 @@
 node_modules/
 .env
 .DS_Store
+
 server/db/*.sqlite
 server/db/*.sqlite3
 server/db/*.db
+server/db/*.json
+server/db/*lock*
+
+.cj-kondo/

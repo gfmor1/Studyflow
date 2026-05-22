@@ -8,19 +8,26 @@ function startOfDay(date) {
   d.setHours(0, 0, 0, 0);
   return d;
 }
+
 function addDays(date, days) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return d;
 }
+
 function clamp(n, lo, hi) {
   return Math.max(lo, Math.min(hi, n));
 }
+
 function dayKey(d) {
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
+}
+
+function maxDate(a, b) {
+  return a > b ? a : b;
 }
 
 // POST /api/schedule/generate
@@ -40,18 +47,15 @@ router.post("/generate", async (req, res) => {
   lookback_days = clamp(Number(lookback_days) || 30, 7, 365);
 
   try {
-    // Fetch tasks for this user (via courses)
-   const tasks = await all(
-  `SELECT t.id, t.title, t.deadline, t.estimated_hours, t.priority
-   FROM tasks t
-   JOIN courses c ON c.id = t.course_id
-   WHERE c.user_id = ? AND t.status = 'todo'
-   ORDER BY datetime(t.deadline) ASC, t.priority DESC`,
-  [user_id]
-);
+    const tasks = await all(
+      `SELECT t.id, t.title, t.deadline, t.estimated_hours, t.priority
+       FROM tasks t
+       JOIN courses c ON c.id = t.course_id
+       WHERE c.user_id = ? AND t.status = 'todo'
+       ORDER BY datetime(t.deadline) ASC, t.priority DESC`,
+      [user_id]
+    );
 
-
-    // Clear old blocks for this user
     await run(
       `DELETE FROM study_blocks
        WHERE task_id IN (
@@ -63,46 +67,82 @@ router.post("/generate", async (req, res) => {
     );
 
     const now = new Date();
-    const dayUsage = new Map(); // "YYYY-MM-DD" -> usedHours
+    const today = startOfDay(now);
+    const dayUsage = new Map(); // "YYYY-MM-DD" -> used minutes
+    const maxMinutesPerDay = Math.floor(max_hours_per_day * 60);
 
     for (const task of tasks) {
       const deadline = new Date(task.deadline);
-      if (Number.isNaN(deadline.getTime())) continue;
-      if (deadline <= now) continue;
+
+      if (Number.isNaN(deadline.getTime())) {
+        continue;
+      }
+
+      if (deadline <= now) {
+        continue;
+      }
 
       let remainingMinutes = Math.round(Number(task.estimated_hours) * 60);
-      if (remainingMinutes <= 0) continue;
+
+      if (remainingMinutes <= 0) {
+        continue;
+      }
 
       let cursor = startOfDay(deadline);
-      const earliest = startOfDay(addDays(deadline, -lookback_days));
+      const earliestByLookback = startOfDay(addDays(deadline, -lookback_days));
+      const earliest = maxDate(today, earliestByLookback);
 
       while (remainingMinutes > 0 && cursor >= earliest) {
         const key = dayKey(cursor);
-        const usedHours = dayUsage.get(key) || 0;
-        const capacityHours = Math.max(0, max_hours_per_day - usedHours);
+        let usedMinutes = dayUsage.get(key) || 0;
+        let availableMinutes = maxMinutesPerDay - usedMinutes;
 
-        if (capacityHours > 0) {
-          const blocksPlaced = Math.floor((usedHours * 60) / block_minutes);
+        if (availableMinutes <= 0) {
+          cursor = addDays(cursor, -1);
+          continue;
+        }
 
-          const start = new Date(cursor);
+        while (remainingMinutes > 0 && availableMinutes > 0) {
+          let start = new Date(cursor);
           start.setHours(day_start_hour, 0, 0, 0);
-          start.setMinutes(start.getMinutes() + blocksPlaced * block_minutes);
+          start.setMinutes(start.getMinutes() + usedMinutes);
 
-          const minutes = Math.min(block_minutes, remainingMinutes);
-          const end = new Date(start);
+          if (start < now) {
+            break;
+          }
+
+          let minutes = Math.min(
+            block_minutes,
+            remainingMinutes,
+            availableMinutes
+          );
+
+          let end = new Date(start);
           end.setMinutes(end.getMinutes() + minutes);
 
-          // Don't schedule after the actual deadline moment
-          if (end <= deadline) {
-            await run(
-              `INSERT INTO study_blocks (task_id, start_time, end_time)
-               VALUES (?, ?, ?)`,
-              [task.id, start.toISOString(), end.toISOString()]
-            );
+          if (end > deadline) {
+            minutes = Math.floor((deadline - start) / 60000);
 
-            remainingMinutes -= minutes;
-            dayUsage.set(key, usedHours + minutes / 60);
+            if (minutes <= 0) {
+              break;
+            }
+
+            end = new Date(start);
+            end.setMinutes(end.getMinutes() + minutes);
           }
+
+          await run(
+            `INSERT INTO study_blocks (task_id, start_time, end_time)
+             VALUES (?, ?, ?)`,
+            [task.id, start.toISOString(), end.toISOString()]
+          );
+
+          remainingMinutes -= minutes;
+
+          usedMinutes += minutes;
+          dayUsage.set(key, usedMinutes);
+
+          availableMinutes = maxMinutesPerDay - usedMinutes;
         }
 
         cursor = addDays(cursor, -1);
