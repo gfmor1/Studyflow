@@ -19,7 +19,7 @@ async function loadCoursesInto(select, includeAll) {
   for (const c of data.courses) {
     const opt = document.createElement("option");
     opt.value = String(c.id);
-    opt.textContent = c.name; // no id shown
+    opt.textContent = c.name;
     select.appendChild(opt);
   }
 }
@@ -28,6 +28,8 @@ function badge(status) {
   return `<span class="badge ${status}">${status}</span>`;
 }
 
+const PRIORITY_LABELS = { 1: "Low", 2: "Medium-Low", 3: "Medium", 4: "High", 5: "Critical" };
+
 async function loadTasks() {
   msg.textContent = "";
   const course_id = filterSel.value ? Number(filterSel.value) : null;
@@ -35,19 +37,26 @@ async function loadTasks() {
   const data = await api(url);
 
   list.innerHTML = "";
+
+  if (!data.tasks.length) {
+    list.innerHTML = '<div class="small" style="padding:8px 0;">No tasks found.</div>';
+    return;
+  }
+
   for (const t of data.tasks) {
     const div = document.createElement("div");
     div.className = "item";
+    div.dataset.priority = t.priority;
 
     div.innerHTML = `
-      <div class="row" style="justify-content: space-between;">
-        <div>
+      <div class="row" style="justify-content: space-between; margin-bottom: 0; flex-wrap: nowrap; gap: 8px;">
+        <div style="min-width: 0;">
           <div class="title">${t.title} ${badge(t.status)}</div>
           <div class="meta">
-            ${t.course_name} · due ${fmtLocal(t.deadline)} · est ${t.estimated_hours}h · priority ${t.priority}
+            ${t.course_name} &middot; due ${fmtLocal(t.deadline)} &middot; ${t.estimated_hours}h est. &middot; P${t.priority} ${PRIORITY_LABELS[t.priority] || ""}
           </div>
         </div>
-        <div class="row" style="flex: 0 0 auto;">
+        <div class="row" style="flex: 0 0 auto; margin-bottom: 0; gap: 6px; flex-wrap: nowrap;">
           <button class="ok" data-action="toggle" data-id="${t.id}" data-status="${t.status}">
             ${t.status === "done" ? "Mark todo" : "Mark done"}
           </button>
@@ -80,7 +89,7 @@ document.getElementById("addBtn").addEventListener("click", async () => {
     });
     document.getElementById("title").value = "";
     await loadTasks();
-    msg.textContent = "Added.";
+    msg.textContent = "Task added.";
   } catch (e) {
     msg.textContent = "Error: " + e.message;
   }

@@ -27,7 +27,7 @@ function fmtLocal(iso) {
 
 function markActiveNav() {
   const here = location.pathname.split("/").pop() || "index.html";
-  document.querySelectorAll("nav a").forEach(a => {
+  document.querySelectorAll(".nav-item, .topbar-links a").forEach(a => {
     if (a.getAttribute("href") === here) a.classList.add("active");
   });
 }

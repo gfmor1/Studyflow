@@ -3,43 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>StudyFlow</title>
+  <title>StudyFlow — Dashboard</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0b1220">
-
+  <meta name="theme-color" content="#090b11">
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>StudyFlow</h1>
-      <p class="muted">Courses, tasks, weekly plan, and schedule blocks.</p>
-      <nav>
-        <a href="index.html">Dashboard</a>
-        <a href="courses.html">Courses</a>
-        <a href="tasks.html">Tasks</a>
-        <a href="plan.html">Weekly Plan</a>
-        <a href="schedule.html">Schedule</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">SF</div>
+      <div class="brand-name">StudyFlow</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="courses.html" class="nav-item"><i data-lucide="book-open"></i><span>Courses</span></a>
+      <a href="tasks.html" class="nav-item"><i data-lucide="check-square-2"></i><span>Tasks</span></a>
+      <a href="plan.html" class="nav-item"><i data-lucide="calendar-days"></i><span>Weekly Plan</span></a>
+      <a href="schedule.html" class="nav-item"><i data-lucide="timer"></i><span>Schedule</span></a>
+    </nav>
+    <div class="sidebar-footer">Your study command center</div>
+  </aside>
+
+  <nav class="topbar">
+    <div class="brand-mark">SF</div>
+    <div class="topbar-links">
+      <a href="index.html">Dashboard</a>
+      <a href="courses.html">Courses</a>
+      <a href="tasks.html">Tasks</a>
+      <a href="plan.html">Plan</a>
+      <a href="schedule.html">Schedule</a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p class="muted">Your study overview at a glance.</p>
+    </div>
+
+    <div class="stats-grid grid" id="stats-grid">
+      <div class="card stat-card" style="opacity:0.4;">
+        <div class="stat-value">—</div>
+        <div class="stat-label">Loading…</div>
+      </div>
+    </div>
+
     <div class="grid">
       <div class="card">
-        <h2>Quick links</h2>
-        <p class="muted">Use these pages. Stop living in raw JSON.</p>
-        <div class="row">
-          <a class="badge" href="courses.html">Manage courses</a>
-          <a class="badge" href="tasks.html">Add and finish tasks</a>
-          <a class="badge" href="plan.html">View weekly plan</a>
-          <a class="badge" href="schedule.html">Generate blocks</a>
+        <h2>Quick Access</h2>
+        <div class="quick-links">
+          <a class="quick-link" href="courses.html"><i data-lucide="book-open"></i><span>Manage courses</span></a>
+          <a class="quick-link" href="tasks.html"><i data-lucide="check-square-2"></i><span>Add &amp; finish tasks</span></a>
+          <a class="quick-link" href="plan.html"><i data-lucide="calendar-days"></i><span>View weekly plan</span></a>
+          <a class="quick-link" href="schedule.html"><i data-lucide="timer"></i><span>Generate blocks</span></a>
         </div>
-      </div>
-
-      <div class="card">
-        <h2>Snapshot</h2>
-        <div class="small" id="stats">Loading…</div>
       </div>
     </div>
   </main>
@@ -59,16 +78,47 @@
       const todo = tasks.tasks.filter(t => t.status === "todo").length;
       const done = tasks.tasks.filter(t => t.status === "done").length;
 
-      document.getElementById("stats").textContent =
-        `Courses: ${courses.courses.length}\n` +
-        `Tasks: ${tasks.tasks.length} (todo ${todo}, done ${done})\n` +
-        `Weekly planned hours: ${plan.week_total_hours}\n` +
-        `Scheduled blocks: ${schedule.blocks.length}`;
+      document.getElementById("stats-grid").innerHTML = `
+        <div class="card stat-card">
+          <div class="stat-icon courses-icon"><i data-lucide="book-open"></i></div>
+          <div class="stat-value">${courses.courses.length}</div>
+          <div class="stat-label">Courses</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon tasks-icon"><i data-lucide="list-checks"></i></div>
+          <div class="stat-value">${tasks.tasks.length}</div>
+          <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon todo-icon"><i data-lucide="circle-dot"></i></div>
+          <div class="stat-value">${todo}</div>
+          <div class="stat-label">To Do</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon done-icon"><i data-lucide="circle-check"></i></div>
+          <div class="stat-value">${done}</div>
+          <div class="stat-label">Done</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon hours-icon"><i data-lucide="clock"></i></div>
+          <div class="stat-value">${plan.week_total_hours}h</div>
+          <div class="stat-label">Planned This Week</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon blocks-icon"><i data-lucide="calendar"></i></div>
+          <div class="stat-value">${schedule.blocks.length}</div>
+          <div class="stat-label">Scheduled Blocks</div>
+        </div>
+      `;
+      lucide.createIcons();
     }
 
     loadStats().catch(e => {
-      document.getElementById("stats").textContent = "Error: " + e.message;
+      document.getElementById("stats-grid").innerHTML =
+        `<div class="card"><p class="small" style="color:var(--danger)">Error: ${e.message}</p></div>`;
     });
+
+    lucide.createIcons();
   </script>
 </body>
 </html>

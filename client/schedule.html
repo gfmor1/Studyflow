@@ -3,32 +3,50 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Schedule</title>
+  <title>StudyFlow — Schedule</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0b1220">
-
+  <meta name="theme-color" content="#090b11">
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>Schedule</h1>
-      <p class="muted">Generate study blocks for todo tasks only.</p>
-      <nav>
-        <a href="index.html">Dashboard</a>
-        <a href="courses.html">Courses</a>
-        <a href="tasks.html">Tasks</a>
-        <a href="plan.html">Weekly Plan</a>
-        <a href="schedule.html">Schedule</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">SF</div>
+      <div class="brand-name">StudyFlow</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="courses.html" class="nav-item"><i data-lucide="book-open"></i><span>Courses</span></a>
+      <a href="tasks.html" class="nav-item"><i data-lucide="check-square-2"></i><span>Tasks</span></a>
+      <a href="plan.html" class="nav-item"><i data-lucide="calendar-days"></i><span>Weekly Plan</span></a>
+      <a href="schedule.html" class="nav-item"><i data-lucide="timer"></i><span>Schedule</span></a>
+    </nav>
+    <div class="sidebar-footer">Your study command center</div>
+  </aside>
+
+  <nav class="topbar">
+    <div class="brand-mark">SF</div>
+    <div class="topbar-links">
+      <a href="index.html">Dashboard</a>
+      <a href="courses.html">Courses</a>
+      <a href="tasks.html">Tasks</a>
+      <a href="plan.html">Plan</a>
+      <a href="schedule.html">Schedule</a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Schedule</h1>
+      <p class="muted">Generate study blocks for all todo tasks. Grouped by day.</p>
+    </div>
+
     <div class="card">
-      <div class="row">
-        <button class="primary" id="gen">Generate schedule</button>
-        <button id="reload">Reload</button>
+      <div class="row" style="margin-bottom: 0;">
+        <button class="primary" id="gen"><i data-lucide="zap"></i> Generate Schedule</button>
+        <button id="reload"><i data-lucide="refresh-cw"></i> Reload</button>
         <div class="small" id="msg"></div>
       </div>
       <hr />
@@ -38,5 +56,6 @@
 
   <script src="js/api.js"></script>
   <script src="js/schedule.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>

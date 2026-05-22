@@ -3,31 +3,49 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tasks</title>
+  <title>StudyFlow — Tasks</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0b1220">
-
+  <meta name="theme-color" content="#090b11">
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>Tasks</h1>
-      <p class="muted">Create tasks, toggle todo/done, and delete.</p>
-      <nav>
-        <a href="index.html">Dashboard</a>
-        <a href="courses.html">Courses</a>
-        <a href="tasks.html">Tasks</a>
-        <a href="plan.html">Weekly Plan</a>
-        <a href="schedule.html">Schedule</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">SF</div>
+      <div class="brand-name">StudyFlow</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="courses.html" class="nav-item"><i data-lucide="book-open"></i><span>Courses</span></a>
+      <a href="tasks.html" class="nav-item"><i data-lucide="check-square-2"></i><span>Tasks</span></a>
+      <a href="plan.html" class="nav-item"><i data-lucide="calendar-days"></i><span>Weekly Plan</span></a>
+      <a href="schedule.html" class="nav-item"><i data-lucide="timer"></i><span>Schedule</span></a>
+    </nav>
+    <div class="sidebar-footer">Your study command center</div>
+  </aside>
+
+  <nav class="topbar">
+    <div class="brand-mark">SF</div>
+    <div class="topbar-links">
+      <a href="index.html">Dashboard</a>
+      <a href="courses.html">Courses</a>
+      <a href="tasks.html">Tasks</a>
+      <a href="plan.html">Plan</a>
+      <a href="schedule.html">Schedule</a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Tasks</h1>
+      <p class="muted">Create tasks, toggle todo/done, and delete. Priority bar on left = urgency level.</p>
+    </div>
+
     <div class="grid">
       <div class="card">
-        <h2>Add task</h2>
+        <h2>Add Task</h2>
         <div class="row">
           <div>
             <label>Course</label>
@@ -53,26 +71,29 @@
           </div>
         </div>
         <div class="row">
-          <button class="primary" id="addBtn">Add</button>
-          <button id="reloadBtn">Reload</button>
+          <button class="primary" id="addBtn"><i data-lucide="plus"></i> Add Task</button>
+          <button id="reloadBtn"><i data-lucide="refresh-cw"></i> Reload</button>
           <div class="small" id="msg"></div>
         </div>
       </div>
 
       <div class="card">
-        <h2>Task list</h2>
-        <div class="row">
+        <h2>Task List</h2>
+        <div class="row" style="margin-bottom: 14px;">
           <div>
             <label>Filter by course</label>
             <select id="filterCourse"></select>
           </div>
         </div>
-        <div class="list" id="list"></div>
+        <div class="list" id="list">
+          <div class="small" style="padding: 8px 0;">Loading tasks…</div>
+        </div>
       </div>
     </div>
   </main>
 
   <script src="js/api.js"></script>
   <script src="js/tasks.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>

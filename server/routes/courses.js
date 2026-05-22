@@ -13,6 +13,7 @@ router.get("/", async (_req, res) => {
        ORDER BY created_at DESC`,
       [DEMO_USER_ID]
     );
+
     res.json({ courses });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -23,7 +24,10 @@ router.post("/", async (req, res) => {
   const name = String(req.body?.name || "").trim();
   const weekly_hours_available = Number(req.body?.weekly_hours_available ?? 10);
 
-  if (!name) return res.status(400).json({ error: "Course name is required." });
+  if (!name) {
+    return res.status(400).json({ error: "Course name is required." });
+  }
+
   if (!(weekly_hours_available > 0)) {
     return res.status(400).json({ error: "weekly_hours_available must be > 0." });
   }
@@ -38,15 +42,14 @@ router.post("/", async (req, res) => {
     const course = await get(
       `SELECT id, name, weekly_hours_available, created_at
        FROM courses
-       WHERE id = ?`,
-      [r.lastID]
+       WHERE id = ? AND user_id = ?`,
+      [r.lastID, DEMO_USER_ID]
     );
 
     res.status(201).json({ course });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-
 });
 
 router.patch("/:id", async (req, res) => {
@@ -116,9 +119,7 @@ router.delete("/:id", async (req, res) => {
     await run(
       `DELETE FROM study_blocks
        WHERE task_id IN (
-         SELECT t.id
-         FROM tasks t
-         WHERE t.course_id = ?
+         SELECT id FROM tasks WHERE course_id = ?
        )`,
       [id]
     );
@@ -142,4 +143,3 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
-
